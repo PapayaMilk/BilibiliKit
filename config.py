@@ -21,8 +21,10 @@ class Config(BaseModel):
         super().__init__(**data)
 
     def read_config(self):
-        with open("config.json", "r", encoding="utf8") as f:
-            content = f.read()
+        content = None
+        if os.path.exists("config.json"):
+            with open("config.json", "r", encoding="utf8") as f:
+                content = f.read()
         return json.loads(content) if content else {}
 
     def update_config(self):
