@@ -1,3 +1,4 @@
+import os
 import sys
 from PyQt5 import uic
 from PyQt5.QtCore import QThread, pyqtSignal
@@ -13,7 +14,7 @@ from Parser import BilibiliParser, BilibiliDownloader
 
 
 class DownloadeWorker(QThread):
-    sig = pyqtSignal()
+    sig = pyqtSignal(str)
 
     def __init__(self, parent, file_name, audio_url, video_url):
         super().__init__(parent)
@@ -24,7 +25,7 @@ class DownloadeWorker(QThread):
     def run(self):
         downloader = BilibiliDownloader(self.file_name, self.audio_url, self.video_url)
         downloader.download()
-        self.sig.emit()
+        self.sig.emit(self.file_name)
 
 
 class mainwindow(QMainWindow):
@@ -42,6 +43,7 @@ class mainwindow(QMainWindow):
         self.manuscript_dash: DashData = None
         self.audio_map = None
         self.video_map = None
+        self.download_list = []
 
     def initConfig(self):
         self.lineEdit_2.setText(config.download_path)
@@ -73,14 +75,19 @@ class mainwindow(QMainWindow):
         self.showManuscriptInfo()
 
     def _download(self):
-        if not self.manuscript_info:
-            self._search()
-        if self.manuscript_info.videos > 1:
-            return
+        # if not self.manuscript_info:
+        self._search()
+        # if self.manuscript_info.videos > 1:
+        #     return
         filename = self.manuscript_info.pages[self.manuscript_info.embedPlayer.p-1].part if self.manuscript_info.embedPlayer.p > 1 else self.manuscript_info.title
+        # print(os.path.join(config.download_path, f"{filename}.mp4"))
+        # if os.path.exists(os.path.join(config.download_path, filename)):
+        #     filename = filename + "-" + self.manuscript_info.bvid
         thread = DownloadeWorker(self, filename, self.manuscript_dash.audio[0].base_url, self.manuscript_dash.video[0].base_url)
         thread.sig.connect(self.downloadFinish)
         thread.start()
+        self.download_list.append(filename)
+        self.listWidget.addItem(filename)
         # self.tabWidget.setCurrentIndex(1)
 
     def showManuscriptInfo(self):
@@ -109,8 +116,10 @@ class mainwindow(QMainWindow):
         config.update_config()
         self.initConfig()
 
-    def downloadFinish(self):
-        self.showDialog("下载完成")
+    def downloadFinish(self, filename):
+        # self.showDialog("下载完成")
+        item = self.listWidget.item(self.download_list.index(filename))
+        item.setText(f'{filename}-------------------------------完成')
 
 
 if __name__ == "__main__":

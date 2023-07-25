@@ -20,11 +20,15 @@ class BilibiliDownloader:
         if os.sep in file_name:
             file_name = file_name.replace(os.sep, "·")
         self.file_path = os.path.join(config.download_path, f"{file_name}.mp4")
+        num = 1
+        while os.path.exists(self.file_path):
+            self.file_path = os.path.join(config.download_path, f"{file_name}({num}).mp4")
+            num += 1
         mask = tools.base64transform(file_name).replace(os.sep, "")
         self.audio_path = os.path.join(config.download_path, f"audio-{mask}.m4s")
         self.video_path = os.path.join(config.download_path, f"video-{mask}.m4s")
 
-    def save_file(self, url, file_path, retry=2, timeout=1):
+    def save_file(self, url, file_path, retry=2, timeout=5):
         num, flag = 0, 0
         while num < retry:
             resp = requests.get(url, headers=self.headers, timeout=timeout, stream=True)
@@ -45,7 +49,7 @@ class BilibiliDownloader:
 
     def transform_mp4(self):
         from moviepy.editor import ffmpeg_tools
-        ffmpeg_tools.ffmpeg_merge_video_audio(self.video_path, self.audio_path, self.file_path)
+        ffmpeg_tools.ffmpeg_merge_video_audio(self.video_path, self.audio_path, self.file_path, logger=None)
         # ffmpeg.contact([self.audio_path, self.video_path], self.file_path)
 
     def clear_file(self, *args):
@@ -62,8 +66,10 @@ class BilibiliDownloader:
 
 
 if __name__ == "__main__":
-    video_name = "底层小V直播500天无人问津，一首《届不到的爱恋》送给大家"
-    audio_url = "https://xy121x205x162x59xy.mcdn.bilivideo.cn:4483/upgcxcode/12/21/931772112/931772112_nb3-1-30280.m4s?e=ig8euxZM2rNcNbdlhoNvNC8BqJIzNbfqXBvEqxTEto8BTrNvN0GvT90W5JZMkX_YN0MvXg8gNEV4NC8xNEV4N03eN0B5tZlqNxTEto8BTrNvNeZVuJ10Kj_g2UB02J0mN0B5tZlqNCNEto8BTrNvNC7MTX502C8f2jmMQJ6mqF2fka1mqx6gqj0eN0B599M=&uipk=5&nbs=1&deadline=1672289219&gen=playurlv2&os=mcdn&oi=30045303&trid=0000e7a6439bc81d4359bd427e2aa13c9752u&mid=0&platform=pc&upsig=4e26b31951ae7441ac324befc212f433&uparams=e,uipk,nbs,deadline,gen,os,oi,trid,mid,platform&mcdnid=11000334&bvc=vod&nettype=0&orderid=0,3&buvid=&build=0&agrr=1&bw=17432&logo=A0000400"
-    video_url = "https://xy121x205x162x59xy.mcdn.bilivideo.cn:4483/upgcxcode/12/21/931772112/931772112_nb3-1-30032.m4s?e=ig8euxZM2rNcNbdlhoNvNC8BqJIzNbfqXBvEqxTEto8BTrNvN0GvT90W5JZMkX_YN0MvXg8gNEV4NC8xNEV4N03eN0B5tZlqNxTEto8BTrNvNeZVuJ10Kj_g2UB02J0mN0B5tZlqNCNEto8BTrNvNC7MTX502C8f2jmMQJ6mqF2fka1mqx6gqj0eN0B599M=&uipk=5&nbs=1&deadline=1672289219&gen=playurlv2&os=mcdn&oi=30045303&trid=0000e7a6439bc81d4359bd427e2aa13c9752u&mid=0&platform=pc&upsig=10d8fd05c58bf411e4cd2c200b7d70b1&uparams=e,uipk,nbs,deadline,gen,os,oi,trid,mid,platform&mcdnid=11000334&bvc=vod&nettype=0&orderid=0,3&buvid=&build=0&agrr=1&bw=26704&logo=A0000400"
+    video_name = "北京遇上西雅图"
+    audio_url = "https://xy122x226x162x102xy.mcdn.bilivideo.cn:4483/upgcxcode/26/32/29973226/29973226_p1-1-30280.m4s?e=ig8euxZM2rNcNbdlhoNvNC8BqJIzNbfqXBvEqxTEto8BTrNvN0GvT90W5JZMkX_YN0MvXg8gNEV4NC8xNEV4N03eN0B5tZlqNxTEto8BTrNvNeZVuJ10Kj_g2UB02J0mN0B5tZlqNCNEto8BTrNvNC7MTX502C8f2jmMQJ6mqF2fka1mqx6gqj0eN0B599M=&uipk=5&nbs=1&deadline=1672379084&gen=playurlv2&os=mcdn&oi=30046011&trid=0000caf60e6257bc44b78c0e92b6127d10edp&mid=0&platform=pc&upsig=360a13a3ab9e72cae6347950468f8cb4&uparams=e,uipk,nbs,deadline,gen,os,oi,trid,mid,platform&mcdnid=9002999&bvc=vod&nettype=0&orderid=0,3&buvid=&build=0&agrr=1&bw=24209&logo=A0000100"
+    video_url = "https://xy122x226x162x102xy.mcdn.bilivideo.cn:4483/upgcxcode/26/32/29973226/29973226_p1-1-30032.m4s?e=ig8euxZM2rNcNbdlhoNvNC8BqJIzNbfqXBvEqxTEto8BTrNvN0GvT90W5JZMkX_YN0MvXg8gNEV4NC8xNEV4N03eN0B5tZlqNxTEto8BTrNvNeZVuJ10Kj_g2UB02J0mN0B5tZlqNCNEto8BTrNvNC7MTX502C8f2jmMQJ6mqF2fka1mqx6gqj0eN0B599M=&uipk=5&nbs=1&deadline=1672379084&gen=playurlv2&os=mcdn&oi=30046011&trid=0000caf60e6257bc44b78c0e92b6127d10edp&mid=0&platform=pc&upsig=a13a8874ed91c145fce844d0541a4231&uparams=e,uipk,nbs,deadline,gen,os,oi,trid,mid,platform&mcdnid=9002999&bvc=vod&nettype=0&orderid=0,3&buvid=&build=0&agrr=1&bw=107033&logo=A0000100"
     downloader = BilibiliDownloader(video_name, audio_url, video_url)
     downloader.download()
+    'https://www.bilibili.com/video/BV1us411Z7YZ/?spm_id_from=333.337.search-card.all.click'
+    'https://www.bilibili.com/video/BV1us411Z7YZ?p=2&vd_source=2d7ec5aa9b72707640a64a0ffa75089f'

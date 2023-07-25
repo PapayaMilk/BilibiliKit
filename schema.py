@@ -20,7 +20,7 @@ class VideoPage(BaseModel):
     part: str = Field(description="p的视频名称")
     duration: PositiveInt = Field(description="p的视频时长")
     dimension: VideoDimension = Field(description="视频分辨率信息")
-    first_frame: HttpUrl = Field(description="首帧图片的url")
+    first_frame: HttpUrl = Field("", description="首帧图片的url")
 
 
 class EmbedPlayer(BaseModel):
