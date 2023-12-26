@@ -118,7 +118,7 @@ class mainwindow(QMainWindow):
 
     def downloadFinish(self, filename):
         # self.showDialog("下载完成")
-        item = self.listWidget.item(self.download_list.index(filename))
+        item = self.listWidget.item(len(self.download_list) - self.download_list[::-1].index(filename) - 1)
         item.setText(f'{filename}-------------------------------完成')
 
 

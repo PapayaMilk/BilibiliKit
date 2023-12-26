@@ -19,6 +19,8 @@ class BilibiliDownloader:
         self.video_url = video_url
         if os.sep in file_name:
             file_name = file_name.replace(os.sep, "·")
+        if "|" in file_name:
+            file_name = file_name.replace("|", "丨")
         self.file_path = os.path.join(config.download_path, f"{file_name}.mp4")
         num = 1
         while os.path.exists(self.file_path):

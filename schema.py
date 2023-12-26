@@ -1,5 +1,5 @@
-from pydantic import BaseModel, Field, PositiveInt, HttpUrl
 from typing import List
+from pydantic import BaseModel, Field, PositiveInt, HttpUrl
 
 
 class VideoOwner(BaseModel):
