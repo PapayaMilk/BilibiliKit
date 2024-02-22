@@ -1,2 +1,2 @@
 # BilibiliKit
-bilibli工具
+bilibili工具
